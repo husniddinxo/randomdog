@@ -1,4 +1,5 @@
 import requests
+import time
 
 TOKEN = '5961004367:AAHumxmRNJgbt3W4qc2QdqvOy3SS8LydV6Q'
 
@@ -19,7 +20,8 @@ def sendButton(chat_id):
         'chat_id': chat_id,
         'text': text,
         'reply_markup': {
-            'keyboard': keyboard
+            'keyboard': keyboard,
+            'resize_keyboard': True
         }
     }
     response = requests.get(f'https://api.telegram.org/bot{TOKEN}/sendMessage', json=payload)
@@ -39,12 +41,26 @@ def sendPhoto(chat_id):
     response = requests.get(f'https://api.telegram.org/bot{TOKEN}/sendPhoto', json=payload)
 
 
-last_update = getUpdates()
-last_msg = last_update['message']['text']
-chat_id = last_update['message']['from']['id']
 
+def main():
+    last_update = getUpdates()
+    last_update_id = last_update['update_id']
 
-if last_msg == '/start':
-    sendButton(chat_id)
-elif last_msg == 'dog':
-    sendPhoto(chat_id)
+    while True:
+        curr_update = getUpdates()
+        curr_update_id = curr_update['update_id']
+        
+        if curr_update_id != last_update_id:
+            last_msg = curr_update['message']['text']
+            chat_id = curr_update['message']['from']['id']
+
+            if last_msg == '/start':
+                sendButton(chat_id)
+            elif last_msg == 'dog':
+                sendPhoto(chat_id)
+            
+            last_update_id = curr_update_id
+
+        time.sleep(1)
+
+main()
