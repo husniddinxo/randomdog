@@ -1,7 +1,8 @@
 import requests
 import time
+import os
 
-TOKEN = '5961004367:AAHumxmRNJgbt3W4qc2QdqvOy3SS8LydV6Q'
+TOKEN = os.environ['TOKEN']
 
 
 def getUpdates():
@@ -25,7 +26,6 @@ def sendButton(chat_id):
         }
     }
     response = requests.get(f'https://api.telegram.org/bot{TOKEN}/sendMessage', json=payload)
-    
 
 def getPhoto():
     response = requests.get('https://random.dog/woof.json')
